@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DobroOS</title>
+    <title>DobroOS 12 - Версия 1H01</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -29,7 +29,6 @@
             color: white;
         }
 
-        /* Анимации */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
@@ -37,7 +36,7 @@
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        /* ==================== ЭКРАН ЗАГРУЗКИ ==================== */
+        /* ЭКРАН ЗАГРУЗКИ */
         .boot-screen {
             position: fixed;
             inset: 0;
@@ -75,7 +74,7 @@
             animation: spin 1.2s linear infinite;
         }
 
-        /* ==================== ЭКРАН БЛОКИРОВКИ ==================== */
+        /* ЭКРАН БЛОКИРОВКИ */
         .lock-screen {
             position: fixed;
             inset: 0;
@@ -139,7 +138,7 @@
 
         .lock-hint { margin-top: 20px; color: rgba(255, 255, 255, 0.5); font-size: 0.9em; animation: fadeIn 0.5s ease 0.4s; }
 
-        /* ==================== РАБОЧИЙ СТОЛ ==================== */
+        /* РАБОЧИЙ СТОЛ */
         .desktop {
             position: fixed;
             inset: 0;
@@ -158,7 +157,7 @@
 
         .desktop-wallpaper img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
 
-        /* ==================== ПАНЕЛЬ ЗАДАЧ ==================== */
+        /* ПАНЕЛЬ ЗАДАЧ */
         .taskbar {
             position: absolute;
             bottom: 20px;
@@ -202,7 +201,7 @@
             cursor: pointer;
         }
 
-        /* ==================== КАЛЕНДАРЬ ==================== */
+        /* КАЛЕНДАРЬ */
         .calendar-popup {
             position: fixed;
             bottom: 100px;
@@ -227,7 +226,7 @@
         .calendar-day.today { background: var(--accent); font-weight: bold; }
         .calendar-weekday { font-weight: bold; opacity: 0.7; padding: 5px; text-align: center; font-size: 0.8em; }
 
-        /* ==================== ЯРКОСТЬ ==================== */
+        /* ЯРКОСТЬ */
         .brightness-popup {
             position: fixed;
             bottom: 100px;
@@ -247,7 +246,7 @@
         .brightness-popup.active { display: block; animation: scaleIn 0.3s ease; }
         .brightness-slider { width: 100%; accent-color: var(--accent); }
 
-        /* ==================== МЕНЮ ПУСК ==================== */
+        /* МЕНЮ ПУСК */
         .start-menu {
             position: fixed;
             bottom: 100px;
@@ -319,7 +318,7 @@
         .start-menu-news h3 i { color: var(--accent); }
         .start-menu-news p { font-size: 0.9em; opacity: 0.8; line-height: 1.5; }
 
-        /* ==================== ОКНА ==================== */
+        /* ОКНА */
         .window {
             position: fixed;
             min-width: 300px;
@@ -374,17 +373,17 @@
 
         .window-content { flex: 1; padding: 20px; overflow-y: auto; }
 
-        /* ==================== КАЛЬКУЛЯТОР ==================== */
+        /* КАЛЬКУЛЯТОР */
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 15px; }
         .calc-btn { padding: 15px; border: none; border-radius: 10px; background: rgba(255, 255, 255, 0.1); color: white; font-size: 1.1em; cursor: pointer; }
         .calc-btn:hover { background: rgba(255, 255, 255, 0.2); }
         .calc-btn.operator { background: var(--accent); }
         .calc-display { padding: 15px; text-align: right; font-size: 2em; background: rgba(0, 0, 0, 0.3); border-radius: 10px; margin: 15px; min-height: 70px; }
 
-        /* ==================== БЛОКНОТ ==================== */
+        /* БЛОКНОТ */
         .notepad-textarea { width: 100%; height: 100%; padding: 15px; border: none; background: transparent; color: white; font-size: 1em; outline: none; resize: none; line-height: 1.5; }
 
-        /* ==================== HTML CODER ==================== */
+        /* HTML CODER */
         .html-coder-toolbar { display: flex; gap: 10px; padding: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
         .html-coder-btn { padding: 8px 15px; border: none; border-radius: 8px; background: rgba(255, 255, 255, 0.1); color: white; cursor: pointer; }
         .html-coder-btn:hover { background: rgba(255, 255, 255, 0.2); }
@@ -393,7 +392,7 @@
         .html-coder-editor { flex: 1; padding: 15px; border: none; background: rgba(0, 0, 0, 0.4); color: #00ff00; font-size: 0.9em; font-family: 'Consolas', monospace; outline: none; resize: none; }
         .html-coder-preview { flex: 1; border: none; background: white; border-radius: 10px; margin: 10px; }
 
-        /* ==================== УВЕДОМЛЕНИЯ ==================== */
+        /* УВЕДОМЛЕНИЯ */
         .notification-area {
             position: fixed;
             top: 20px;
@@ -420,7 +419,7 @@
         .notification.info { border-left: 4px solid var(--accent); }
         .notification.error { border-left: 4px solid var(--error-color); }
 
-        /* ==================== УВЕДОМЛЕНИЕ ОБНОВЛЕНИЯ ==================== */
+        /* УВЕДОМЛЕНИЕ ОБНОВЛЕНИЯ */
         .update-notification {
             position: fixed;
             top: 20px;
@@ -435,65 +434,25 @@
             animation: slideIn 0.5s ease;
         }
 
-        .update-notification .update-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .update-notification .update-header i {
-            font-size: 2.5em;
-        }
-
-        .update-notification .update-header h3 {
-            margin: 0;
-            font-size: 1.2em;
-        }
-
-        .update-notification .update-header p {
-            margin: 5px 0 0;
-            opacity: 0.9;
-        }
-
-        .update-notification .update-changes {
-            margin-bottom: 15px;
-            padding-left: 20px;
-            font-size: 0.9em;
-        }
-
-        .update-notification .update-changes li {
-            margin-bottom: 5px;
-        }
-
-        .update-notification .update-btn {
-            width: 100%;
-            padding: 12px;
-            background: white;
-            color: #0078D4;
-            border: none;
-            border-radius: 10px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .update-notification .update-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-        }
+        .update-notification .update-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .update-notification .update-header i { font-size: 2.5em; }
+        .update-notification .update-header h3 { margin: 0; font-size: 1.2em; }
+        .update-notification .update-header p { margin: 5px 0 0; opacity: 0.9; }
+        .update-notification .update-changes { margin-bottom: 15px; padding-left: 20px; font-size: 0.9em; }
+        .update-notification .update-changes li { margin-bottom: 5px; }
+        .update-notification .update-btn { width: 100%; padding: 12px; background: white; color: #0078D4; border: none; border-radius: 10px; font-size: 1em; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .update-notification .update-btn:hover { transform: scale(1.02); box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); }
     </style>
 </head>
 <body>
 
-<!-- ==================== ЭКРАН ЗАГРУЗКИ ==================== -->
+<!-- ЭКРАН ЗАГРУЗКИ -->
 <div class="boot-screen" id="bootScreen">
     <div class="boot-logo"><i class="fab fa-windows"></i></div>
     <div class="boot-spinner"></div>
 </div>
 
-<!-- ==================== ЭКРАН БЛОКИРОВКИ ==================== -->
+<!-- ЭКРАН БЛОКИРОВКИ -->
 <div class="lock-screen" id="lockScreen">
     <div class="time" id="lockTime">12:00</div>
     <div class="date" id="lockDate">1 января 2024</div>
@@ -506,7 +465,7 @@
     <div class="lock-hint">Подсказка: пароль 1234</div>
 </div>
 
-<!-- ==================== РАБОЧИЙ СТОЛ ==================== -->
+<!-- РАБОЧИЙ СТОЛ -->
 <div class="desktop" id="desktop">
     <div class="desktop-wallpaper" id="desktopWallpaper"></div>
 
@@ -579,7 +538,7 @@
         
         <div class="start-menu-news">
             <h3><i class="fas fa-newspaper"></i> DobroOS News</h3>
-            <p>Это самая полная версия DobroOS 12! Множество приложений и функций! Ждите новых обновлений! 🚀</p>
+            <p>Версия 1H01. Доступно обновление до 1H02! 🚀</p>
         </div>
     </div>
 
@@ -673,11 +632,10 @@
     let brightness = 100;
 
     // ==================== СИСТЕМА ОБНОВЛЕНИЙ ====================
-    const CURRENT_VERSION = '1.0';
+    const CURRENT_VERSION = '1H01';
     const VERSION_URL = 'https://dobroos.github.io/DobroOS-12/version.json';
-    const UPDATE_URL = 'https://dobroos.github.io/DobroOS-12/windows.html';
+    const UPDATE_URL = 'https://dobroos.github.io/DobroOS-12/windows2.html';
     
-    // Проверка обновлений
     async function checkForUpdates() {
         try {
             const response = await fetch(VERSION_URL);
@@ -693,7 +651,6 @@
         }
     }
     
-    // Показать уведомление об обновлении
     function showUpdateNotification(data) {
         const updateDiv = document.createElement('div');
         updateDiv.className = 'update-notification';
@@ -717,12 +674,10 @@
         document.body.appendChild(updateDiv);
     }
     
-    // Скачать обновление
     function downloadUpdate() {
         window.location.href = UPDATE_URL;
     }
     
-    // Проверяем через 5 секунд после загрузки
     window.addEventListener('load', function() {
         setTimeout(checkForUpdates, 5000);
     });
