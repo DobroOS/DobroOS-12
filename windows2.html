@@ -38,6 +38,8 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes menuAppear { from { opacity: 0; transform: translateX(-50%) scale(0.8) rotate(-5deg); } to { opacity: 1; transform: translateX(-50%) scale(1) rotate(0); } }
 
         /* ЭКРАН ЗАГРУЗКИ */
         .boot-screen {
@@ -258,52 +260,84 @@
         .brightness-popup.active { display: block; animation: scaleIn 0.3s ease; }
         .brightness-slider { width: 100%; accent-color: var(--accent); }
 
-        /* МЕНЮ ПУСК */
+        /* ==================== НОВОЕ МЕНЮ ПУСК ==================== */
         .start-menu {
             position: fixed;
             bottom: 100px;
             left: 50%;
             transform: translateX(-50%) scale(0.9);
             width: 650px;
-            background: var(--glass-color);
-            backdrop-filter: blur(var(--glass-blur));
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, 
+                rgba(0, 120, 212, 0.3), 
+                rgba(0, 164, 239, 0.2),
+                rgba(79, 172, 254, 0.1)
+            );
+            backdrop-filter: blur(50px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 30px;
             padding: 30px;
             z-index: 2000;
             opacity: 0;
             pointer-events: none;
             transition: all 0.3s;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 100px rgba(0, 120, 212, 0.2);
             color: white;
         }
 
-        .start-menu.active { opacity: 1; pointer-events: all; transform: translateX(-50%) scale(1); animation: scaleIn 0.3s ease; }
+        .start-menu.active { 
+            opacity: 1; 
+            pointer-events: all; 
+            transform: translateX(-50%) scale(1); 
+            animation: menuAppear 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
 
         .start-menu-user {
             display: flex;
             align-items: center;
             gap: 15px;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             margin-bottom: 20px;
         }
 
         .start-menu-user .user-avatar {
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
-            background: var(--accent);
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            box-shadow: 0 5px 20px rgba(0, 120, 212, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5em;
             overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .start-menu-user .user-avatar:hover {
+            transform: scale(1.1) rotate(10deg);
         }
 
         .start-menu-user .user-info { flex: 1; }
-        .start-menu-user .user-name { font-size: 1.2em; font-weight: 500; }
+
+        .start-menu-user .user-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            background: linear-gradient(135deg, #fff, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .start-menu-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            margin: 15px 0;
+        }
 
         .start-menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
 
@@ -313,22 +347,113 @@
             cursor: pointer;
             text-align: center;
             background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s;
+        }
+
+        .start-menu-item:hover::before {
+            left: 100%;
+        }
+
+        .start-menu-item:hover {
+            background: rgba(0, 120, 212, 0.3);
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 120, 212, 0.3);
+        }
+
+        .start-menu-item i {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, var(--accent-light), #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
             transition: all 0.3s;
         }
 
-        .start-menu-item:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.02); }
-        .start-menu-item i { font-size: 2em; color: var(--accent-light); margin-bottom: 10px; }
+        .start-menu-item:hover i {
+            transform: scale(1.2);
+        }
+
+        .start-menu-item span {
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
 
         .start-menu-news {
-            background: rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, rgba(0, 120, 212, 0.2), rgba(0, 164, 239, 0.1));
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             padding: 20px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .start-menu-news h3 { font-size: 1.1em; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .start-menu-news::before {
+            content: '📰';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 5em;
+            opacity: 0.1;
+            transform: rotate(15deg);
+        }
+
+        .start-menu-news h3 {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #fff, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+
         .start-menu-news h3 i { color: var(--accent); }
-        .start-menu-news p { font-size: 0.9em; opacity: 0.8; line-height: 1.5; }
+
+        .start-menu-news p {
+            font-size: 0.9em;
+            opacity: 0.8;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .start-menu-power {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .start-menu-power:hover {
+            background: rgba(231, 76, 60, 0.3);
+            border-color: var(--error-color);
+            transform: scale(1.02);
+        }
+
+        .start-menu-power i {
+            color: var(--error-color);
+            margin-right: 10px;
+        }
 
         /* ОКНА */
         .window {
@@ -410,7 +535,7 @@
         .browser-url { flex: 1; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; color: white; outline: none; }
         .browser-frame { flex: 1; border: none; background: white; }
 
-        /* ИГРА ЗМЕЙКА */
+        /* ЗМЕЙКА */
         .snake-game { text-align: center; padding: 20px; }
         .snake-canvas { background: rgba(0, 0, 0, 0.5); border-radius: 10px; }
         .snake-score { font-size: 1.5em; margin: 10px 0; }
@@ -517,6 +642,101 @@
         .recent-bg-item:hover { border-color: var(--accent); transform: scale(1.05); }
         .recent-bg-item img { width: 100%; height: 100%; object-fit: cover; }
         .empty-state { color: rgba(255, 255, 255, 0.5); font-size: 0.9em; padding: 20px; text-align: center; border: 2px dashed rgba(255, 255, 255, 0.2); border-radius: 10px; }
+
+        /* ==================== КРАСИВЫЙ О ПК ==================== */
+        .info-content {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(0,120,212,0.1), rgba(0,164,239,0.05));
+            border-radius: 20px;
+        }
+
+        .info-content .logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #0078D4, #00A4EF, #4facfe);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5em;
+            box-shadow: 
+                0 10px 30px rgba(0, 120, 212, 0.4),
+                0 0 50px rgba(0, 164, 239, 0.3);
+            animation: pulse 2s infinite, float 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .info-content .logo::after {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 35px;
+            background: linear-gradient(135deg, #0078D4, #00A4EF);
+            filter: blur(20px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .info-content h2 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #fff, #4facfe, #0078D4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 120, 212, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .info-content .version {
+            font-size: 1.3em;
+            color: #4facfe;
+            margin-bottom: 30px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .info-content .details {
+            max-width: 350px;
+            margin: 0 auto;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-content .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .info-content .detail-row:hover {
+            background: rgba(0, 120, 212, 0.1);
+            padding-left: 20px;
+        }
+
+        .info-content .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-content .detail-row .label {
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 400;
+        }
+
+        .info-content .detail-row .value {
+            font-weight: 600;
+            color: #4facfe;
+            text-shadow: 0 0 10px rgba(0, 164, 239, 0.3);
+        }
 
         /* УВЕДОМЛЕНИЯ */
         .notification-area {
@@ -651,15 +871,17 @@
         <div style="text-align: center; margin-top: 5px; font-size: 0.8em;" id="brightnessValue">100%</div>
     </div>
 
-    <!-- Меню Пуск -->
+    <!-- ==================== НОВОЕ МЕНЮ ПУСК ==================== -->
     <div class="start-menu" id="startMenu">
         <div class="start-menu-user">
             <div class="user-avatar" id="menuAvatar">😊</div>
             <div class="user-info">
                 <div class="user-name" id="menuUserName">Пользователь</div>
-                <div style="opacity: 0.7; font-size: 0.9em;">Онлайн</div>
+                <div style="opacity: 0.7; font-size: 0.9em; color: #4facfe;">Онлайн</div>
             </div>
         </div>
+        
+        <div class="start-menu-divider"></div>
         
         <div class="start-menu-grid">
             <div class="start-menu-item" onclick="openWindow('calculator')">
@@ -692,9 +914,15 @@
             </div>
         </div>
         
+        <div class="start-menu-divider"></div>
+        
         <div class="start-menu-news">
             <h3><i class="fas fa-newspaper"></i> DobroOS News</h3>
             <p>Версия 1H02! Новые функции: Браузер и Змейка! 🚀</p>
+        </div>
+        
+        <div class="start-menu-power" onclick="showNotification('info', 'Выключение...')">
+            <i class="fas fa-power-off"></i> Выключить
         </div>
     </div>
 
@@ -1091,6 +1319,7 @@
                         <div class="info-content">
                             <div class="logo"><i class="fab fa-windows"></i></div>
                             <h2>DobroOS</h2>
+                            <div class="version">Версия 1H02</div>
                             <div class="details">
                                 <div class="detail-row">
                                     <span class="label">Версия</span>
@@ -1122,7 +1351,7 @@
     </div>
 
     <!-- Окно О системе -->
-    <div class="window" id="window-info" style="top: 120px; left: 500px; width: 350px; height: 250px;">
+    <div class="window" id="window-info" style="top: 120px; left: 500px; width: 400px; height: 300px;">
         <div class="window-titlebar">
             <i class="fas fa-info-circle"></i>
             <span class="window-title">О системе</span>
@@ -1130,10 +1359,11 @@
                 <button class="win-btn close" onclick="closeWindow('info')">✕</button>
             </div>
         </div>
-        <div class="window-content">
+        <div class="window-content" style="background: linear-gradient(135deg, rgba(0,120,212,0.1), rgba(0,164,239,0.05));">
             <div class="info-content">
                 <div class="logo"><i class="fab fa-windows"></i></div>
                 <h2>DobroOS</h2>
+                <div class="version">Версия 1H02</div>
                 <div class="details">
                     <div class="detail-row">
                         <span class="label">Версия</span>
