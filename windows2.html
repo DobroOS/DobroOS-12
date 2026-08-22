@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DobroOS 12 - Версия 1H02</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        :root {
+            --accent: #0078D4;
+            --accent-light: #00A4EF;
+            --error-color: #e74c3c;
+            --success-color: #4CAF50;
+            --glass-blur: 40px;
+            --glass-color: rgba(0, 120, 212, 0.2);
+        }
+
+        body {
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: white;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* ЭКРАН ЗАГРУЗКИ */
+        .boot-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 99998;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease;
+        }
+
+        .boot-screen.hidden { opacity: 0; pointer-events: none; }
+
+        .boot-logo {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            box-shadow: 0 20px 60px rgba(0, 120, 212, 0.5);
+            margin-bottom: 40px;
+            animation: pulse 2s infinite;
+        }
+
+        .boot-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
+        }
+
+        /* ЭКРАН БЛОКИРОВКИ */
+        .lock-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 9997;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+        }
+
+        .lock-screen.active { display: flex; animation: fadeIn 0.5s ease; }
+
+        .lock-screen .time {
+            font-size: 6em;
+            font-weight: 200;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            animation: slideInUp 0.5s ease;
+        }
+
+        .lock-screen .date {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+            opacity: 0.8;
+            animation: slideInUp 0.5s ease 0.1s;
+        }
+
+        .lock-password-container { margin-bottom: 20px; animation: slideInUp 0.5s ease 0.2s; }
+
+        .lock-password {
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1em;
+            outline: none;
+            width: 300px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s;
+        }
+
+        .lock-password:focus { border-color: var(--accent); box-shadow: 0 0 20px rgba(0, 120, 212, 0.3); }
+
+        .lock-btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            animation: slideInUp 0.5s ease 0.3s;
+            transition: all 0.3s;
+        }
+
+        .lock-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 120, 212, 0.3); }
+
+        .lock-hint { margin-top: 20px; color: rgba(255, 255, 255, 0.5); font-size: 0.9em; animation: fadeIn 0.5s ease 0.4s; }
+
+        /* РАБОЧИЙ СТОЛ */
+        .desktop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+        }
+
+        .desktop.active { display: block; animation: fadeIn 0.5s ease; }
+
+        .desktop-wallpaper {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
+            opacity: 0.6;
+        }
+
+        .desktop-wallpaper img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
+
+        /* ПАНЕЛЬ ЗАДАЧ */
+        .taskbar {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 60px;
+            background: var(--glass-color);
+            backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
+            gap: 5px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .taskbar-item {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 1.2em;
+            transition: all 0.3s;
+        }
+
+        .taskbar-item:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.05); }
+        .taskbar-item.start-btn { background: var(--accent); width: 50px; font-size: 1.3em; }
+
+        .taskbar-clock {
+            margin-left: 10px;
+            padding: 8px 15px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        /* КАЛЕНДАРЬ */
+        .calendar-popup {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 300px;
+            background: var(--glass-color);
+            backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 15px;
+            z-index: 2000;
+            display: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        .calendar-popup.active { display: block; animation: scaleIn 0.3s ease; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+        .calendar-day { padding: 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 0.8em; }
+        .calendar-day:hover { background: rgba(255, 255, 255, 0.1); }
+        .calendar-day.today { background: var(--accent); font-weight: bold; }
+        .calendar-weekday { font-weight: bold; opacity: 0.7; padding: 5px; text-align: center; font-size: 0.8em; }
+
+        /* ЯРКОСТЬ */
+        .brightness-popup {
+            position: fixed;
+            bottom: 100px;
+            right: 330px;
+            width: 200px;
+            background: var(--glass-color);
+            backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 15px;
+            z-index: 2000;
+            display: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        .brightness-popup.active { display: block; animation: scaleIn 0.3s ease; }
+        .brightness-slider { width: 100%; accent-color: var(--accent); }
+
+        /* МЕНЮ ПУСК */
+        .start-menu {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            width: 650px;
+            background: var(--glass-color);
+            backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 30px;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        .start-menu.active { opacity: 1; pointer-events: all; transform: translateX(-50%) scale(1); animation: scaleIn 0.3s ease; }
+
+        .start-menu-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .start-menu-user .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            overflow: hidden;
+        }
+
+        .start-menu-user .user-info { flex: 1; }
+        .start-menu-user .user-name { font-size: 1.2em; font-weight: 500; }
+
+        .start-menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+
+        .start-menu-item {
+            padding: 20px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .start-menu-item:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.02); }
+        .start-menu-item i { font-size: 2em; color: var(--accent-light); margin-bottom: 10px; }
+
+        .start-menu-news {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .start-menu-news h3 { font-size: 1.1em; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .start-menu-news h3 i { color: var(--accent); }
+        .start-menu-news p { font-size: 0.9em; opacity: 0.8; line-height: 1.5; }
+
+        /* ОКНА */
+        .window {
+            position: fixed;
+            min-width: 300px;
+            min-height: 200px;
+            background: var(--glass-color);
+            backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 100;
+            color: white;
+            overflow: hidden;
+        }
+
+        .window.open { display: flex; flex-direction: column; animation: scaleIn 0.3s ease; }
+
+        .window-titlebar {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: move;
+            user-select: none;
+        }
+
+        .window-title { flex: 1; font-weight: 500; }
+        .window-controls { display: flex; gap: 5px; }
+
+        .win-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .win-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .win-btn.close:hover { background: var(--error-color); }
+
+        .window-resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            cursor: nwse-resize;
+        }
+
+        .window-content { flex: 1; padding: 20px; overflow-y: auto; }
+
+        /* КАЛЬКУЛЯТОР */
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 15px; }
+        .calc-btn { padding: 15px; border: none; border-radius: 10px; background: rgba(255, 255, 255, 0.1); color: white; font-size: 1.1em; cursor: pointer; }
+        .calc-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .calc-btn.operator { background: var(--accent); }
+        .calc-display { padding: 15px; text-align: right; font-size: 2em; background: rgba(0, 0, 0, 0.3); border-radius: 10px; margin: 15px; min-height: 70px; }
+
+        /* БЛОКНОТ */
+        .notepad-textarea { width: 100%; height: 100%; padding: 15px; border: none; background: transparent; color: white; font-size: 1em; outline: none; resize: none; line-height: 1.5; }
+
+        /* HTML CODER */
+        .html-coder-toolbar { display: flex; gap: 10px; padding: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
+        .html-coder-btn { padding: 8px 15px; border: none; border-radius: 8px; background: rgba(255, 255, 255, 0.1); color: white; cursor: pointer; }
+        .html-coder-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .html-coder-btn.run { background: var(--success-color); font-weight: bold; }
+        .html-coder-container { display: flex; flex: 1; overflow: hidden; }
+        .html-coder-editor { flex: 1; padding: 15px; border: none; background: rgba(0, 0, 0, 0.4); color: #00ff00; font-size: 0.9em; font-family: 'Consolas', monospace; outline: none; resize: none; }
+        .html-coder-preview { flex: 1; border: none; background: white; border-radius: 10px; margin: 10px; }
+
+        /* ==================== НОВЫЕ ФУНКЦИИ 1H02 ==================== */
+        /* БРАУЗЕР */
+        .browser-window { display: flex; flex-direction: column; height: 100%; }
+        .browser-toolbar { display: flex; gap: 10px; padding: 10px; background: rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
+        .browser-url { flex: 1; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; color: white; outline: none; }
+        .browser-frame { flex: 1; border: none; background: white; }
+
+        /* ИГРА ЗМЕЙКА */
+        .snake-game { text-align: center; padding: 20px; }
+        .snake-canvas { background: rgba(0, 0, 0, 0.5); border-radius: 10px; }
+        .snake-score { font-size: 1.5em; margin: 10px 0; }
+
+        /* МАГАЗИН */
+        .store-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px; }
+        .store-item { text-align: center; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 15px; }
+        .store-item i { font-size: 3em; color: var(--accent); margin-bottom: 10px; }
+        .store-item .install-btn { padding: 10px 20px; background: var(--success-color); border: none; border-radius: 8px; color: white; cursor: pointer; }
+
+        /* УВЕДОМЛЕНИЯ */
+        .notification-area {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .notification {
+            background: var(--glass-color);
+            backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 15px 20px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+            max-width: 350px;
+        }
+
+        .notification.success { border-left: 4px solid var(--success-color); }
+        .notification.info { border-left: 4px solid var(--accent); }
+        .notification.error { border-left: 4px solid var(--error-color); }
+
+        /* СТАТУС БАР ВЕРСИИ */
+        .version-badge {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background: linear-gradient(135deg, #0078D4, #00A4EF);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            z-index: 5000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+<!-- ЭКРАН ЗАГРУЗКИ -->
+<div class="boot-screen" id="bootScreen">
+    <div class="boot-logo"><i class="fab fa-windows"></i></div>
+    <div class="boot-spinner"></div>
+</div>
+
+<!-- ЭКРАН БЛОКИРОВКИ -->
+<div class="lock-screen" id="lockScreen">
+    <div class="time" id="lockTime">12:00</div>
+    <div class="date" id="lockDate">1 января 2024</div>
+    <div class="lock-password-container">
+        <input type="password" class="lock-password" id="lockPassword" placeholder="Введите пароль" onkeypress="checkLockEnter(event)">
+    </div>
+    <button class="lock-btn" onclick="tryUnlock()">
+        <i class="fas fa-unlock"></i> Войти
+    </button>
+    <div class="lock-hint">Подсказка: пароль 1234</div>
+</div>
+
+<!-- РАБОЧИЙ СТОЛ -->
+<div class="desktop" id="desktop">
+    <div class="desktop-wallpaper" id="desktopWallpaper"></div>
+
+    <!-- Версия -->
+    <div class="version-badge">
+        <i class="fas fa-rocket"></i> Версия 1H02
+    </div>
+
+    <!-- Панель задач -->
+    <div class="taskbar" id="taskbar">
+        <div class="taskbar-item start-btn" onclick="toggleStartMenu()">
+            <i class="fab fa-windows"></i>
+        </div>
+        <div class="taskbar-item" onclick="openWindow('calculator')">
+            <i class="fas fa-calculator"></i>
+        </div>
+        <div class="taskbar-item" onclick="openWindow('notepad')">
+            <i class="fas fa-sticky-note"></i>
+        </div>
+        <div class="taskbar-item" onclick="openWindow('htmlcoder')">
+            <i class="fas fa-code"></i>
+        </div>
+        <div class="taskbar-item" onclick="openWindow('browser')">
+            <i class="fas fa-globe"></i>
+        </div>
+        <div class="taskbar-item" onclick="openWindow('snake')">
+            <i class="fas fa-gamepad"></i>
+        </div>
+        <div class="taskbar-item" onclick="openWindow('store')">
+            <i class="fas fa-store"></i>
+        </div>
+        <div class="taskbar-clock" onclick="toggleCalendar()">
+            <div id="taskbarTime">12:00</div>
+            <div id="taskbarDate">1 января</div>
+        </div>
+        <div class="taskbar-item" onclick="toggleBrightness()">
+            <i class="fas fa-sun"></i>
+        </div>
+    </div>
+
+    <!-- Календарь -->
+    <div class="calendar-popup" id="calendarPopup">
+        <div class="calendar-header">
+            <h3 id="calendarMonth">Январь 2024</h3>
+            <div>
+                <button class="win-btn" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+                <button class="win-btn" onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+
+    <!-- Яркость -->
+    <div class="brightness-popup" id="brightnessPopup">
+        <h3 style="font-size: 0.9em; margin-bottom: 10px;"><i class="fas fa-sun"></i> Яркость</h3>
+        <input type="range" class="brightness-slider" min="0" max="100" value="100" oninput="changeBrightness(this.value)">
+        <div style="text-align: center; margin-top: 5px; font-size: 0.8em;" id="brightnessValue">100%</div>
+    </div>
+
+    <!-- Меню Пуск -->
+    <div class="start-menu" id="startMenu">
+        <div class="start-menu-user">
+            <div class="user-avatar" id="menuAvatar">😊</div>
+            <div class="user-info">
+                <div class="user-name" id="menuUserName">Пользователь</div>
+                <div style="opacity: 0.7; font-size: 0.9em;">Онлайн</div>
+            </div>
+        </div>
+        
+        <div class="start-menu-grid">
+            <div class="start-menu-item" onclick="openWindow('calculator')">
+                <i class="fas fa-calculator"></i>
+                <span>Калькулятор</span>
+            </div>
+            <div class="start-menu-item" onclick="openWindow('notepad')">
+                <i class="fas fa-sticky-note"></i>
+                <span>Блокнот</span>
+            </div>
+            <div class="start-menu-item" onclick="openWindow('htmlcoder')">
+                <i class="fas fa-code"></i>
+                <span>HTML Coder</span>
+            </div>
+            <div class="start-menu-item" onclick="openWindow('browser')">
+                <i class="fas fa-globe"></i>
+                <span>Браузер</span>
+            </div>
+            <div class="start-menu-item" onclick="openWindow('snake')">
+                <i class="fas fa-gamepad"></i>
+                <span>Змейка</span>
+            </div>
+            <div class="start-menu-item" onclick="openWindow('store')">
+                <i class="fas fa-store"></i>
+                <span>Магазин</span>
+            </div>
+        </div>
+        
+        <div class="start-menu-news">
+            <h3><i class="fas fa-newspaper"></i> DobroOS News</h3>
+            <p>Версия 1H02! Новые функции: Браузер, Змейка, Магазин! 🚀</p>
+        </div>
+    </div>
+
+    <!-- Окно Калькулятора -->
+    <div class="window" id="window-calculator" style="top: 100px; left: 200px; width: 300px; height: 400px;">
+        <div class="window-titlebar">
+            <i class="fas fa-calculator"></i>
+            <span class="window-title">Калькулятор</span>
+            <div class="window-controls">
+                <button class="win-btn close" onclick="closeWindow('calculator')">✕</button>
+            </div>
+        </div>
+        <div class="window-content" style="padding: 0;">
+            <div class="calc-display" id="calcDisplay">0</div>
+            <div class="calc-grid">
+                <button class="calc-btn" onclick="calcInput('7')">7</button>
+                <button class="calc-btn" onclick="calcInput('8')">8</button>
+                <button class="calc-btn" onclick="calcInput('9')">9</button>
+                <button class="calc-btn operator" onclick="calcInput('/')">÷</button>
+                <button class="calc-btn" onclick="calcInput('4')">4</button>
+                <button class="calc-btn" onclick="calcInput('5')">5</button>
+                <button class="calc-btn" onclick="calcInput('6')">6</button>
+                <button class="calc-btn operator" onclick="calcInput('*')">×</button>
+                <button class="calc-btn" onclick="calcInput('1')">1</button>
+                <button class="calc-btn" onclick="calcInput('2')">2</button>
+                <button class="calc-btn" onclick="calcInput('3')">3</button>
+                <button class="calc-btn operator" onclick="calcInput('-')">−</button>
+                <button class="calc-btn" onclick="calcClear()">C</button>
+                <button class="calc-btn" onclick="calcInput('0')">0</button>
+                <button class="calc-btn operator" onclick="calcCalculate()">=</button>
+                <button class="calc-btn operator" onclick="calcInput('+')">+</button>
+            </div>
+        </div>
+        <div class="window-resize-handle"></div>
+    </div>
+
+    <!-- Окно Блокнота -->
+    <div class="window" id="window-notepad" style="top: 80px; left: 100px; width: 500px; height: 350px;">
+        <div class="window-titlebar">
+            <i class="fas fa-sticky-note"></i>
+            <span class="window-title">Блокнот</span>
+            <div class="window-controls">
+                <button class="win-btn close" onclick="closeWindow('notepad')">✕</button>
+            </div>
+        </div>
+        <div class="window-content" style="padding: 0;">
+            <textarea class="notepad-textarea" placeholder="Введите текст..."></textarea>
+        </div>
+        <div class="window-resize-handle"></div>
+    </div>
+
+    <!-- Окно HTML Coder -->
+    <div class="window" id="window-htmlcoder" style="top: 50px; left: 150px; width: 900px; height: 600px;">
+        <div class="window-titlebar">
+            <i class="fas fa-code"></i>
+            <span class="window-title">HTML Coder</span>
+            <div class="window-controls">
+                <button class="win-btn close" onclick="closeWindow('htmlcoder')">✕</button>
+            </div>
+        </div>
+        <div class="window-content" style="padding: 0; display: flex; flex-direction: column;">
+            <div class="html-coder-toolbar">
+                <button class="html-coder-btn run" onclick="runHtmlCode()"><i class="fas fa-play"></i> Запустить</button>
+                <button class="html-coder-btn" onclick="clearHtmlCode()"><i class="fas fa-trash"></i> Очистить</button>
+            </div>
+            <div class="html-coder-container">
+                <textarea class="html-coder-editor" id="htmlCodeEditor" placeholder="<html>
+<head>
+    <title>Моя страница</title>
+</head>
+<body>
+    <h1>Привет, мир!</h1>
+</body>
+</html>"></textarea>
+                <iframe class="html-coder-preview" id="htmlPreview"></iframe>
+            </div>
+        </div>
+        <div class="window-resize-handle"></div>
+    </div>
+
+    <!-- НОВОЕ: Браузер -->
+    <div class="window" id="window-browser" style="top: 50px; left: 100px; width: 800px; height: 500px;">
+        <div class="window-titlebar">
+            <i class="fas fa-globe"></i>
+            <span class="window-title">Браузер</span>
+            <div class="window-controls">
+                <button class="win-btn close" onclick="closeWindow('browser')">✕</button>
+            </div>
+        </div>
+        <div class="window-content" style="padding: 0;">
+            <div class="browser-window">
+                <div class="browser-toolbar">
+                    <button class="html-coder-btn" onclick="browserBack()"><i class="fas fa-arrow-left"></i></button>
+                    <button class="html-coder-btn" onclick="browserForward()"><i class="fas fa-arrow-right"></i></button>
+                    <button class="html-coder-btn" onclick="browserReload()"><i class="fas fa-sync"></i></button>
+                    <input type="text" class="browser-url" id="browserUrl" value="https://www.google.com" placeholder="Введите URL...">
+                    <button class="html-coder-btn run" onclick="browserGo()"><i class="fas fa-arrow-right"></i></button>
+                </div>
+                <iframe class="browser-frame" id="browserFrame" src="https://www.google.com"></iframe>
+            </div>
+        </div>
+        <div class="window-resize-handle"></div>
+    </div>
+
+    <!-- НОВОЕ: Змейка -->
+    <div class="window" id="window-snake" style="top: 100px; left: 200px; width: 400px; height: 500px;">
+        <div class="window-titlebar">
+            <i class="fas fa-gamepad"></i>
+            <span class="window-title">Змейка</span>
+            <div class="window-controls">
+                <button class="win-btn close" onclick="closeWindow('snake')">✕</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <div class="snake-game">
+                <canvas id="snakeCanvas" class="snake-canvas" width="300" height="300"></canvas>
+                <div class="snake-score">Счёт: <span id="snakeScore">0</span></div>
+                <button class="html-coder-btn run" onclick="startSnakeGame()">Начать игру</button>
+                <p style="margin-top: 10px; opacity: 0.7;">Управление: стрелки на клавиатуре</p>
+            </div>
+        </div>
+        <div class="window-resize-handle"></div>
+    </div>
+
+    <!-- НОВОЕ: Магазин -->
+    <div class="window" id="window-store" style="top: 80px; left: 150px; width: 700px; height: 450px;">
+        <div class="window-titlebar">
+            <i class="fas fa-store"></i>
+            <span class="window-title">Магазин приложений</span>
+            <div class="window-controls">
+                <button class="win-btn close" onclick="closeWindow('store')">✕</button>
+            </div>
+        </div>
+        <div class="window-content" style="padding: 0;">
+            <div class="store-grid">
+                <div class="store-item">
+                    <i class="fas fa-music"></i>
+                    <h3>Музыка</h3>
+                    <p>Скоро!</p>
+                    <button class="install-btn" onclick="showNotification('info', 'Скоро!')">Установить</button>
+                </div>
+                <div class="store-item">
+                    <i class="fas fa-video"></i>
+                    <h3>Видео</h3>
+                    <p>Скоро!</p>
+                    <button class="install-btn" onclick="showNotification('info', 'Скоро!')">Установить</button>
+                </div>
+                <div class="store-item">
+                    <i class="fas fa-camera"></i>
+                    <h3>Камера</h3>
+                    <p>Скоро!</p>
+                    <button class="install-btn" onclick="showNotification('info', 'Скоро!')">Установить</button>
+                </div>
+            </div>
+        </div>
+        <div class="window-resize-handle"></div>
+    </div>
+</div>
+
+<!-- Область уведомлений -->
+<div class="notification-area" id="notificationArea"></div>
+
+<script>
+    // ==================== ПЕРЕМЕННЫЕ ====================
+    let SYSTEM_PASSWORD = '1234';
+    let calcExpression = '';
+    let currentCalendarMonth = new Date().getMonth();
+    let currentCalendarYear = new Date().getFullYear();
+    let brightness = 100;
+
+    // ==================== ЗАГРУЗКА ====================
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            document.getElementById('bootScreen').classList.add('hidden');
+            setTimeout(function() {
+                document.getElementById('bootScreen').style.display = 'none';
+                document.getElementById('lockScreen').classList.add('active');
+            }, 800);
+        }, 3000);
+    });
+
+    // ==================== ЭКРАН БЛОКИРОВКИ ====================
+    function tryUnlock() {
+        const password = document.getElementById('lockPassword').value;
+        if (password === SYSTEM_PASSWORD) {
+            document.getElementById('lockScreen').classList.remove('active');
+            document.getElementById('desktop').classList.add('active');
+            showNotification('success', 'Добро пожаловать в DobroOS 1H02!');
+        } else {
+            document.getElementById('lockPassword').value = '';
+        }
+    }
+
+    function checkLockEnter(event) {
+        if (event.key === 'Enter') tryUnlock();
+    }
+
+    // ==================== КАЛЬКУЛЯТОР ====================
+    function calcInput(value) {
+        calcExpression += value;
+        document.getElementById('calcDisplay').textContent = calcExpression;
+    }
+
+    function calcClear() {
+        calcExpression = '';
+        document.getElementById('calcDisplay').textContent = '0';
+    }
+
+    function calcCalculate() {
+        try {
+            const result = eval(calcExpression);
+            document.getElementById('calcDisplay').textContent = result;
+            calcExpression = String(result);
+        } catch (e) {
+            document.getElementById('calcDisplay').textContent = 'Ошибка';
+            calcExpression = '';
+        }
+    }
+
+    // ==================== КАЛЕНДАРЬ ====================
+    function toggleCalendar() {
+        document.getElementById('calendarPopup').classList.toggle('active');
+        if (document.getElementById('calendarPopup').classList.contains('active')) {
+            renderCalendar();
+        }
+    }
+
+    function changeMonth(delta) {
+        currentCalendarMonth += delta;
+        if (currentCalendarMonth < 0) {
+            currentCalendarMonth = 11;
+            currentCalendarYear--;
+        } else if (currentCalendarMonth > 11) {
+            currentCalendarMonth = 0;
+            currentCalendarYear++;
+        }
+        renderCalendar();
+    }
+
+    function renderCalendar() {
+        const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+        const weekdayNames = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+        
+        document.getElementById('calendarMonth').textContent = `${monthNames[currentCalendarMonth]} ${currentCalendarYear}`;
+        
+        const grid = document.getElementById('calendarGrid');
+        grid.innerHTML = '';
+        
+        weekdayNames.forEach(day => {
+            const div = document.createElement('div');
+            div.className = 'calendar-weekday';
+            div.textContent = day;
+            grid.appendChild(div);
+        });
+        
+        const firstDay = new Date(currentCalendarYear, currentCalendarMonth, 1);
+        const daysInMonth = new Date(currentCalendarYear, currentCalendarMonth + 1, 0).getDate();
+        
+        for (let i = 0; i < firstDay.getDay(); i++) {
+            const div = document.createElement('div');
+            div.className = 'calendar-day';
+            grid.appendChild(div);
+        }
+        
+        const today = new Date();
+        
+        for (let i = 1; i <= daysInMonth; i++) {
+            const div = document.createElement('div');
+            div.className = 'calendar-day';
+            div.textContent = i;
+            
+            if (i === today.getDate() && currentCalendarMonth === today.getMonth() && currentCalendarYear === today.getFullYear()) {
+                div.classList.add('today');
+            }
+            
+            grid.appendChild(div);
+        }
+    }
+
+    // ==================== ЯРКОСТЬ ====================
+    function toggleBrightness() {
+        document.getElementById('brightnessPopup').classList.toggle('active');
+    }
+
+    function changeBrightness(value) {
+        brightness = value;
+        document.getElementById('brightnessValue').textContent = value + '%';
+        document.body.style.filter = `brightness(${value / 100})`;
+    }
+
+    // ==================== МЕНЮ ПУСК ====================
+    function toggleStartMenu() {
+        document.getElementById('startMenu').classList.toggle('active');
+    }
+
+    // ==================== ОКНА ====================
+    function openWindow(windowId) {
+        const win = document.getElementById(`window-${windowId}`);
+        if (win) {
+            win.classList.add('open');
+            document.getElementById('startMenu').classList.remove('active');
+        }
+    }
+
+    function closeWindow(windowId) {
+        document.getElementById(`window-${windowId}`).classList.remove('open');
+    }
+
+    // ==================== ПЕРЕТАСКИВАНИЕ ОКОН ====================
+    document.querySelectorAll('.window-titlebar').forEach(titlebar => {
+        titlebar.addEventListener('mousedown', startDrag);
+    });
+
+    function startDrag(e) {
+        const win = e.target.closest('.window');
+        if (!win) return;
+        
+        const rect = win.getBoundingClientRect();
+        const offsetX = e.clientX - rect.left;
+        const offsetY = e.clientY - rect.top;
+
+        function onMouseMove(e) {
+            win.style.left = `${e.clientX - offsetX}px`;
+            win.style.top = `${e.clientY - offsetY}px`;
+        }
+
+        function onMouseUp() {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    }
+
+    // ==================== RESIZE ОКОН ====================
+    document.querySelectorAll('.window-resize-handle').forEach(handle => {
+        handle.addEventListener('mousedown', startResize);
+    });
+
+    function startResize(e) {
+        e.stopPropagation();
+        const win = e.target.closest('.window');
+        if (!win) return;
+        
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const startWidth = win.offsetWidth;
+        const startHeight = win.offsetHeight;
+
+        function onMouseMove(e) {
+            const newWidth = startWidth + (e.clientX - startX);
+            const newHeight = startHeight + (e.clientY - startY);
+            win.style.width = `${Math.max(300, newWidth)}px`;
+            win.style.height = `${Math.max(200, newHeight)}px`;
+        }
+
+        function onMouseUp() {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    }
+
+    // ==================== HTML CODER ====================
+    function runHtmlCode() {
+        const code = document.getElementById('htmlCodeEditor').value;
+        const preview = document.getElementById('htmlPreview');
+        preview.srcdoc = code;
+        showNotification('success', 'HTML код запущен!');
+    }
+
+    function clearHtmlCode() {
+        document.getElementById('htmlCodeEditor').value = '';
+        document.getElementById('htmlPreview').srcdoc = '';
+        showNotification('info', 'Код очищен');
+    }
+
+    // ==================== НОВОЕ: БРАУЗЕР ====================
+    function browserGo() {
+        const url = document.getElementById('browserUrl').value;
+        const frame = document.getElementById('browserFrame');
+        if (!url.startsWith('http')) {
+            frame.src = 'https://' + url;
+        } else {
+            frame.src = url;
+        }
+    }
+
+    function browserBack() {
+        const frame = document.getElementById('browserFrame');
+        try { frame.contentWindow.history.back(); } catch(e) {}
+    }
+
+    function browserForward() {
+        const frame = document.getElementById('browserFrame');
+        try { frame.contentWindow.history.forward(); } catch(e) {}
+    }
+
+    function browserReload() {
+        const frame = document.getElementById('browserFrame');
+        frame.src = frame.src;
+    }
+
+    // ==================== НОВОЕ: ЗМЕЙКА ====================
+    let snakeGame = null;
+
+    function startSnakeGame() {
+        const canvas = document.getElementById('snakeCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let snake = [{x: 5, y: 5}];
+        let direction = 'right';
+        let food = {x: 10, y: 10};
+        let score = 0;
+        let gameOver = false;
+        
+        function placeFood() {
+            food = {
+                x: Math.floor(Math.random() * 20),
+                y: Math.floor(Math.random() * 20)
+            };
+        }
+        
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(0, 0, 300, 300);
+            
+            ctx.fillStyle = '#4CAF50';
+            snake.forEach(segment => {
+                ctx.fillRect(segment.x * 15, segment.y * 15, 13, 13);
+            });
+            
+            ctx.fillStyle = '#FF6B6B';
+            ctx.fillRect(food.x * 15, food.y * 15, 13, 13);
+        }
+        
+        function update() {
+            if (gameOver) return;
+            
+            const head = {...snake[0]};
+            
+            switch(direction) {
+                case 'right': head.x++; break;
+                case 'left': head.x--; break;
+                case 'up': head.y--; break;
+                case 'down': head.y++; break;
+            }
+            
+            if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20) {
+                gameOver = true;
+                showNotification('error', 'Игра окончена! Счёт: ' + score);
+                return;
+            }
+            
+            snake.unshift(head);
+            
+            if (head.x === food.x && head.y === food.y) {
+                score += 10;
+                document.getElementById('snakeScore').textContent = score;
+                placeFood();
+            } else {
+                snake.pop();
+            }
+            
+            draw();
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            switch(e.key) {
+                case 'ArrowRight': direction = 'right'; break;
+                case 'ArrowLeft': direction = 'left'; break;
+                case 'ArrowUp': direction = 'up'; break;
+                case 'ArrowDown': direction = 'down'; break;
+            }
+        });
+        
+        if (snakeGame) clearInterval(snakeGame);
+        placeFood();
+        snakeGame = setInterval(update, 100);
+        draw();
+        showNotification('success', 'Игра началась!');
+    }
+
+    // ==================== УВЕДОМЛЕНИЯ ====================
+    function showNotification(type, message) {
+        const area = document.getElementById('notificationArea');
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        area.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    // ==================== ЧАСЫ ====================
+    function updateClocks() {
+        const now = new Date();
+        document.getElementById('taskbarTime').textContent = now.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
+        document.getElementById('taskbarDate').textContent = now.toLocaleDateString('ru-RU', {day: 'numeric', month: 'long'});
+        document.getElementById('lockTime').textContent = now.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
+        document.getElementById('lockDate').textContent = now.toLocaleDateString('ru-RU', {day: 'numeric', month: 'long', year: 'numeric'});
+    }
+
+    // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+    setInterval(updateClocks, 1000);
+    updateClocks();
+    renderCalendar();
+
+    // Закрытие меню по клику вне
+    document.addEventListener('click', (e) => {
+        const menu = document.getElementById('startMenu');
+        const startBtn = document.querySelector('.start-btn');
+        const calendar = document.getElementById('calendarPopup');
+        const clock = document.querySelector('.taskbar-clock');
+        const brightness = document.getElementById('brightnessPopup');
+        const brightnessBtn = document.querySelector('.taskbar-item[onclick="toggleBrightness()"]');
+        
+        if (!menu.contains(e.target) && !startBtn.contains(e.target)) {
+            menu.classList.remove('active');
+        }
+        
+        if (!calendar.contains(e.target) && !clock.contains(e.target)) {
+            calendar.classList.remove('active');
+        }
+        
+        if (!brightness.contains(e.target) && !brightnessBtn.contains(e.target)) {
+            brightness.classList.remove('active');
+        }
+    });
+</script>
+</body>
+</html>
