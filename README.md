@@ -4,6 +4,7 @@
 ![Build](https://img.shields.io/badge/Сборка-1H02-green)
 ![Year](https://img.shields.io/badge/Год_выпуска-2026-purple)
 ![Status](https://img.shields.io/badge/Статус-Активная_разработка-orange)
+![Author](https://img.shields.io/badge/DobroTeam-red)
 
 ## 🌟 Добро пожаловать в DobroOS!
 
