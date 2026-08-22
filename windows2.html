@@ -6,6 +6,7 @@
     <title>DobroOS 12 - Версия 1H02</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ==================== ВСЕ СТИЛИ ==================== */
         * {
             margin: 0;
             padding: 0;
@@ -214,6 +215,32 @@
             cursor: pointer;
         }
 
+        .taskbar-weather {
+            padding: 8px 15px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .taskbar-weather i { color: #FFD93D; }
+
+        .taskbar-search {
+            padding: 8px 15px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .taskbar-search i { color: var(--accent-light); }
+        .taskbar-search span { font-size: 0.9em; opacity: 0.7; }
+
         /* КАЛЕНДАРЬ */
         .calendar-popup {
             position: fixed;
@@ -266,6 +293,7 @@
             left: 50%;
             transform: translateX(-50%) scale(0.9);
             width: 650px;
+            height: 500px;
             background: linear-gradient(135deg, 
                 rgba(0, 120, 212, 0.3), 
                 rgba(0, 164, 239, 0.2),
@@ -283,6 +311,7 @@
                 0 20px 60px rgba(0, 0, 0, 0.5),
                 0 0 100px rgba(0, 120, 212, 0.2);
             color: white;
+            overflow-y: auto;
         }
 
         .start-menu.active { 
@@ -801,6 +830,10 @@
         <div class="taskbar-item start-btn" onclick="toggleStartMenu()">
             <i class="fab fa-windows"></i>
         </div>
+        <div class="taskbar-search" onclick="showNotification('info', 'Поиск скоро будет!')">
+            <i class="fas fa-search"></i>
+            <span>Поиск</span>
+        </div>
         <div class="taskbar-item" onclick="openWindow('calculator')">
             <i class="fas fa-calculator"></i>
         </div>
@@ -826,6 +859,10 @@
             <div id="taskbarTime">12:00</div>
             <div id="taskbarDate">1 января</div>
         </div>
+        <div class="taskbar-weather" onclick="showNotification('info', 'Погода: +23°C, Солнечно')">
+            <i class="fas fa-sun"></i>
+            <span>+23°</span>
+        </div>
         <div class="taskbar-item" onclick="toggleBrightness()">
             <i class="fas fa-sun"></i>
         </div>
@@ -850,7 +887,7 @@
         <div style="text-align: center; margin-top: 5px; font-size: 0.8em;" id="brightnessValue">100%</div>
     </div>
 
-    <!-- МЕНЮ ПУСК (без кнопки выключения) -->
+    <!-- МЕНЮ ПУСК -->
     <div class="start-menu" id="startMenu">
         <div class="start-menu-user">
             <div class="user-avatar" id="menuAvatar">😊</div>
@@ -897,7 +934,7 @@
         
         <div class="start-menu-news">
             <h3><i class="fas fa-newspaper"></i> DobroOS News</h3>
-            <p>Версия 1H02! Новые функции: Браузер и Змейка! 🚀</p>
+            <p>Версия 1H02! Новые функции: Браузер, Змейка и улучшенные настройки! 🚀</p>
         </div>
     </div>
 
@@ -1029,7 +1066,7 @@
     </div>
 
     <!-- Окно Настроек -->
-    <div class="window" id="window-settings" style="top: 80px; left: 300px; width: 800px; height: 600px;">
+    <div class="window" id="window-settings" style="top: 50px; left: 200px; width: 900px; height: 650px;">
         <div class="window-titlebar">
             <i class="fas fa-cog"></i>
             <span class="window-title">Настройки</span>
@@ -1037,7 +1074,7 @@
                 <button class="win-btn close" onclick="closeWindow('settings')">✕</button>
             </div>
         </div>
-        <div class="window-content">
+        <div class="window-content" style="padding: 0;">
             <div class="settings-content">
                 <div class="settings-sidebar">
                     <div class="settings-item active" onclick="switchSettingsTab(this)"><i class="fas fa-palette"></i> Персонализация</div>
@@ -1052,7 +1089,7 @@
                     <!-- Персонализация -->
                     <div class="settings-tab" data-tab="0">
                         <div class="setting-group">
-                            <h3>Акцентный цвет</h3>
+                            <h3>🎨 Акцентный цвет</h3>
                             <div class="setting-row">
                                 <div>
                                     <div class="setting-label">Выберите цвет</div>
@@ -1064,13 +1101,16 @@
                                     <div class="color-picker" style="background: #FF6B6B;" onclick="changeAccent('#FF6B6B')"></div>
                                     <div class="color-picker" style="background: #FFD93D;" onclick="changeAccent('#FFD93D')"></div>
                                     <div class="color-picker" style="background: #00D2FF;" onclick="changeAccent('#00D2FF')"></div>
+                                    <div class="color-picker" style="background: #FF69B4;" onclick="changeAccent('#FF69B4')"></div>
+                                    <div class="color-picker" style="background: #9B59B6;" onclick="changeAccent('#9B59B6')"></div>
+                                    <div class="color-picker" style="background: #E67E22;" onclick="changeAccent('#E67E22')"></div>
                                     <input type="color" class="color-input" value="#0078D4" onchange="changeAccent(this.value)">
                                 </div>
                             </div>
                         </div>
                         
                         <div class="setting-group">
-                            <h3>Фон рабочего стола</h3>
+                            <h3>🖼️ Фон рабочего стола</h3>
                             <div class="setting-row">
                                 <div>
                                     <div class="setting-label">Загрузите своё изображение</div>
@@ -1084,14 +1124,14 @@
                         </div>
                         
                         <div class="setting-group">
-                            <h3>Недавние фоны</h3>
+                            <h3>📂 Недавние фоны</h3>
                             <div class="recent-backgrounds" id="recentBackgrounds">
                                 <div class="empty-state">Нет недавних фонов</div>
                             </div>
                         </div>
                         
                         <div class="setting-group">
-                            <h3>Стекло (Glassmorphism)</h3>
+                            <h3>🪟 Стекло (Glassmorphism)</h3>
                             <div class="setting-row">
                                 <div>
                                     <div class="setting-label">Размытие</div>
@@ -1100,12 +1140,37 @@
                                 <input type="range" class="slider" min="0" max="50" value="40" oninput="changeGlassBlur(this.value)">
                             </div>
                         </div>
+                        
+                        <div class="setting-group">
+                            <h3>✨ Эффекты</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Анимации окон</div>
+                                    <div class="setting-description">Плавные анимации при открытии</div>
+                                </div>
+                                <div class="style-selector">
+                                    <div class="style-option active" onclick="toggleWindowAnim(true, this)">Вкл</div>
+                                    <div class="style-option" onclick="toggleWindowAnim(false, this)">Выкл</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Звуковые эффекты</div>
+                                <div class="setting-description">Звуки при открытии/закрытии</div>
+                            </div>
+                            <div class="style-selector">
+                                <div class="style-option active" onclick="toggleSounds(true, this)">Вкл</div>
+                                <div class="style-option" onclick="toggleSounds(false, this)">Выкл</div>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Пуск -->
                     <div class="settings-tab" data-tab="1" style="display: none;">
                         <div class="setting-group">
-                            <h3>Стиль меню Пуск</h3>
+                            <h3>🎯 Стиль меню Пуск</h3>
                             <div class="setting-row">
                                 <div>
                                     <div class="setting-label">Выберите стиль</div>
@@ -1118,12 +1183,15 @@
                                     <div class="style-option" onclick="changeStartStyle('list', this)">
                                         <i class="fas fa-list"></i> Список
                                     </div>
+                                    <div class="style-option" onclick="changeStartStyle('compact', this)">
+                                        <i class="fas fa-compress"></i> Компактный
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="setting-group">
-                            <h3>Размер меню Пуск</h3>
+                            <h3>📏 Размер меню Пуск</h3>
                             <div class="setting-row">
                                 <div>
                                     <div class="setting-label">Ширина</div>
@@ -1134,7 +1202,7 @@
                         </div>
                         
                         <div class="setting-group">
-                            <h3>Показывать новости</h3>
+                            <h3>👁️ Показывать элементы</h3>
                             <div class="setting-row">
                                 <div>
                                     <div class="setting-label">DobroOS News</div>
@@ -1147,17 +1215,14 @@
                             </div>
                         </div>
                         
-                        <div class="setting-group">
-                            <h3>Показывать пользователя</h3>
-                            <div class="setting-row">
-                                <div>
-                                    <div class="setting-label">Профиль пользователя</div>
-                                    <div class="setting-description">Показывать аватар и имя</div>
-                                </div>
-                                <div class="style-selector">
-                                    <div class="style-option active" onclick="toggleUser(true, this)">Вкл</div>
-                                    <div class="style-option" onclick="toggleUser(false, this)">Выкл</div>
-                                </div>
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Профиль пользователя</div>
+                                <div class="setting-description">Показывать аватар и имя</div>
+                            </div>
+                            <div class="style-selector">
+                                <div class="style-option active" onclick="toggleUser(true, this)">Вкл</div>
+                                <div class="style-option" onclick="toggleUser(false, this)">Выкл</div>
                             </div>
                         </div>
                     </div>
@@ -1165,7 +1230,7 @@
                     <!-- Панель задач -->
                     <div class="settings-tab" data-tab="2" style="display: none;">
                         <div class="setting-group">
-                            <h3>Стиль панели задач</h3>
+                            <h3>🎯 Стиль панели задач</h3>
                             <div class="setting-row">
                                 <div>
                                     <div class="setting-label">Выберите стиль</div>
@@ -1183,7 +1248,7 @@
                         </div>
                         
                         <div class="setting-group">
-                            <h3>Размер панели</h3>
+                            <h3>📏 Размер панели</h3>
                             <div class="setting-row">
                                 <div>
                                     <div class="setting-label">Высота панели</div>
@@ -1194,7 +1259,7 @@
                         </div>
                         
                         <div class="setting-group">
-                            <h3>Прозрачность панели</h3>
+                            <h3>🎨 Внешний вид</h3>
                             <div class="setting-row">
                                 <div>
                                     <div class="setting-label">Прозрачность</div>
@@ -1205,7 +1270,7 @@
                         </div>
                         
                         <div class="setting-group">
-                            <h3>Показывать часы</h3>
+                            <h3>👁️ Показывать элементы</h3>
                             <div class="setting-row">
                                 <div>
                                     <div class="setting-label">Часы на панели</div>
@@ -1217,12 +1282,23 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Яркость на панели</div>
+                                <div class="setting-description">Показывать иконку яркости</div>
+                            </div>
+                            <div class="style-selector">
+                                <div class="style-option active" onclick="toggleBrightnessIcon(true, this)">Вкл</div>
+                                <div class="style-option" onclick="toggleBrightnessIcon(false, this)">Выкл</div>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Учётная запись -->
                     <div class="settings-tab" data-tab="3" style="display: none;">
                         <div class="setting-group">
-                            <h3>Имя пользователя</h3>
+                            <h3>👤 Имя пользователя</h3>
                             <div class="setting-row">
                                 <div>
                                     <div class="setting-label">Изменить имя</div>
@@ -1236,7 +1312,7 @@
                         </div>
                         
                         <div class="setting-group">
-                            <h3>Изменение пароля</h3>
+                            <h3>🔒 Изменение пароля</h3>
                             <div class="setting-row">
                                 <div>
                                     <div class="setting-label">Введите новый пароль</div>
@@ -1254,7 +1330,7 @@
                     <!-- Язык и время -->
                     <div class="settings-tab" data-tab="4" style="display: none;">
                         <div class="setting-group">
-                            <h3>Язык</h3>
+                            <h3>🌍 Язык</h3>
                             <div class="setting-row">
                                 <div>
                                     <div class="setting-label">Выберите язык</div>
@@ -1268,7 +1344,7 @@
                         </div>
                         
                         <div class="setting-group">
-                            <h3>Время</h3>
+                            <h3>⏰ Время</h3>
                             <div class="setting-row">
                                 <div>
                                     <div class="setting-label">Формат времени</div>
@@ -1798,6 +1874,25 @@
         document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
         element.classList.add('active');
         document.querySelector('.taskbar-clock').style.display = show ? 'block' : 'none';
+    }
+
+    function toggleBrightnessIcon(show, element) {
+        document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+        const btns = document.querySelectorAll('.taskbar-item[onclick="toggleBrightness()"]');
+        btns.forEach(btn => btn.style.display = show ? 'flex' : 'none');
+    }
+
+    function toggleWindowAnim(show, element) {
+        document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+        showNotification('success', show ? 'Анимации включены!' : 'Анимации выключены!');
+    }
+
+    function toggleSounds(show, element) {
+        document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+        showNotification('success', show ? 'Звуки включены!' : 'Звуки выключены!');
     }
 
     function changeUserName() {
