@@ -1,7 +1,7 @@
 {
     "version": "1H02",
     "name": "DobroOS 12",
-    "update_url": "windows2.html",
+    "update_url": "Updates/windows2.html",
     "date": "2024-01-15",
     "changes": [
         "Добавлены новые функции",
