@@ -236,8 +236,10 @@
             align-items: center;
             gap: 8px;
             cursor: pointer;
+            transition: all 0.3s;
         }
 
+        .taskbar-search:hover { background: rgba(255, 255, 255, 0.25); }
         .taskbar-search i { color: var(--accent-light); }
         .taskbar-search span { font-size: 0.9em; opacity: 0.7; }
 
@@ -548,6 +550,21 @@
         .snake-canvas { background: rgba(0, 0, 0, 0.5); border-radius: 10px; }
         .snake-score { font-size: 1.5em; margin: 10px 0; }
 
+        /* ПОИСК */
+        .search-container { padding: 20px; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px; padding: 10px 20px; align-items: center; }
+        .search-box i { color: var(--accent-light); font-size: 1.2em; }
+        .search-box input { flex: 1; background: transparent; border: none; color: white; font-size: 1em; outline: none; }
+        .search-box input::placeholder { color: rgba(255, 255, 255, 0.5); }
+        .search-category { margin-bottom: 20px; }
+        .search-category h4 { color: var(--accent-light); margin-bottom: 10px; font-size: 1.1em; }
+        .search-apps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .search-app { display: flex; align-items: center; gap: 10px; padding: 15px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; cursor: pointer; transition: all 0.3s; }
+        .search-app:hover { background: rgba(0, 120, 212, 0.3); border-color: var(--accent); transform: translateY(-3px); }
+        .search-app i { font-size: 1.5em; color: var(--accent-light); }
+        .search-app span { font-size: 0.9em; }
+        .search-results { max-height: 300px; overflow-y: auto; }
+
         /* НАСТРОЙКИ */
         .settings-content { display: grid; grid-template-columns: 250px 1fr; height: 100%; }
         .settings-sidebar { border-right: 1px solid rgba(255, 255, 255, 0.2); padding: 15px; }
@@ -830,7 +847,7 @@
         <div class="taskbar-item start-btn" onclick="toggleStartMenu()">
             <i class="fab fa-windows"></i>
         </div>
-        <div class="taskbar-search" onclick="showNotification('info', 'Поиск скоро будет!')">
+        <div class="taskbar-search" onclick="openSearch()">
             <i class="fas fa-search"></i>
             <span>Поиск</span>
         </div>
@@ -934,8 +951,89 @@
         
         <div class="start-menu-news">
             <h3><i class="fas fa-newspaper"></i> DobroOS News</h3>
-            <p>Версия 1H02! Новые функции: Браузер, Змейка и улучшенные настройки! 🚀</p>
+            <p>Версия 1H02! Новые функции: Поиск, Браузер, Змейка и улучшенные настройки! 🚀</p>
         </div>
+    </div>
+
+    <!-- Окно Поиска -->
+    <div class="window" id="window-search" style="top: 100px; left: 300px; width: 600px; height: 450px;">
+        <div class="window-titlebar">
+            <i class="fas fa-search"></i>
+            <span class="window-title">Поиск</span>
+            <div class="window-controls">
+                <button class="win-btn close" onclick="closeWindow('search')">✕</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Поиск в системе и в интернете..." onkeypress="handleSearchEnter(event)">
+                    <button class="html-coder-btn run" onclick="performSearch()">Найти</button>
+                </div>
+                <div class="search-results" id="searchResults">
+                    <div class="search-category">
+                        <h4>Приложения</h4>
+                        <div class="search-apps">
+                            <div class="search-app" onclick="openWindow('calculator')">
+                                <i class="fas fa-calculator"></i>
+                                <span>Калькулятор</span>
+                            </div>
+                            <div class="search-app" onclick="openWindow('notepad')">
+                                <i class="fas fa-sticky-note"></i>
+                                <span>Блокнот</span>
+                            </div>
+                            <div class="search-app" onclick="openWindow('htmlcoder')">
+                                <i class="fas fa-code"></i>
+                                <span>HTML Coder</span>
+                            </div>
+                            <div class="search-app" onclick="openWindow('browser')">
+                                <i class="fas fa-globe"></i>
+                                <span>Браузер</span>
+                            </div>
+                            <div class="search-app" onclick="openWindow('snake')">
+                                <i class="fas fa-gamepad"></i>
+                                <span>Змейка</span>
+                            </div>
+                            <div class="search-app" onclick="openWindow('settings')">
+                                <i class="fas fa-cog"></i>
+                                <span>Настройки</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-category">
+                        <h4>Быстрые ссылки</h4>
+                        <div class="search-apps">
+                            <div class="search-app" onclick="openSiteInBrowser('https://www.google.com')">
+                                <i class="fab fa-google"></i>
+                                <span>Google</span>
+                            </div>
+                            <div class="search-app" onclick="openSiteInBrowser('https://www.youtube.com')">
+                                <i class="fab fa-youtube"></i>
+                                <span>YouTube</span>
+                            </div>
+                            <div class="search-app" onclick="openSiteInBrowser('https://github.com')">
+                                <i class="fab fa-github"></i>
+                                <span>GitHub</span>
+                            </div>
+                            <div class="search-app" onclick="openSiteInBrowser('https://www.wikipedia.org')">
+                                <i class="fas fa-book"></i>
+                                <span>Wikipedia</span>
+                            </div>
+                            <div class="search-app" onclick="openSiteInBrowser('https://www.bing.com')">
+                                <i class="fas fa-search"></i>
+                                <span>Bing</span>
+                            </div>
+                            <div class="search-app" onclick="openSiteInBrowser('https://www.yandex.ru')">
+                                <i class="fas fa-globe"></i>
+                                <span>Яндекс</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="window-resize-handle"></div>
     </div>
 
     <!-- Окно Калькулятора -->
@@ -1016,7 +1114,7 @@
     </div>
 
     <!-- Окно Браузера -->
-    <div class="window" id="window-browser" style="top: 50px; left: 100px; width: 900px; height: 600px;">
+    <div class="window" id="window-browser" style="top: 50px; left: 100px; width: 1000px; height: 650px;">
         <div class="window-titlebar">
             <i class="fas fa-globe"></i>
             <span class="window-title">Браузер</span>
@@ -1030,7 +1128,7 @@
                     <button class="html-coder-btn" onclick="browserBack()"><i class="fas fa-arrow-left"></i></button>
                     <button class="html-coder-btn" onclick="browserForward()"><i class="fas fa-arrow-right"></i></button>
                     <button class="html-coder-btn" onclick="browserReload()"><i class="fas fa-sync"></i></button>
-                    <input type="text" class="browser-url" id="browserUrl" value="https://www.google.com" placeholder="Введите URL...">
+                    <input type="text" class="browser-url" id="browserUrl" value="https://www.google.com" placeholder="Введите URL или поисковый запрос...">
                     <button class="html-coder-btn run" onclick="browserGo()"><i class="fas fa-arrow-right"></i></button>
                 </div>
                 <div class="browser-quick-links">
@@ -1038,6 +1136,8 @@
                     <button class="html-coder-btn" onclick="openSite('https://www.youtube.com')">YouTube</button>
                     <button class="html-coder-btn" onclick="openSite('https://github.com')">GitHub</button>
                     <button class="html-coder-btn" onclick="openSite('https://www.wikipedia.org')">Wikipedia</button>
+                    <button class="html-coder-btn" onclick="openSite('https://www.bing.com')">Bing</button>
+                    <button class="html-coder-btn" onclick="openSite('https://www.yandex.ru')">Яндекс</button>
                 </div>
                 <iframe class="browser-frame" id="browserFrame" src="https://www.google.com" allow="fullscreen"></iframe>
             </div>
@@ -1154,17 +1254,6 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="setting-row">
-                            <div>
-                                <div class="setting-label">Звуковые эффекты</div>
-                                <div class="setting-description">Звуки при открытии/закрытии</div>
-                            </div>
-                            <div class="style-selector">
-                                <div class="style-option active" onclick="toggleSounds(true, this)">Вкл</div>
-                                <div class="style-option" onclick="toggleSounds(false, this)">Выкл</div>
-                            </div>
-                        </div>
                     </div>
                     
                     <!-- Пуск -->
@@ -1182,9 +1271,6 @@
                                     </div>
                                     <div class="style-option" onclick="changeStartStyle('list', this)">
                                         <i class="fas fa-list"></i> Список
-                                    </div>
-                                    <div class="style-option" onclick="changeStartStyle('compact', this)">
-                                        <i class="fas fa-compress"></i> Компактный
                                     </div>
                                 </div>
                             </div>
@@ -1280,17 +1366,6 @@
                                     <div class="style-option active" onclick="toggleClock(true, this)">Вкл</div>
                                     <div class="style-option" onclick="toggleClock(false, this)">Выкл</div>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-row">
-                            <div>
-                                <div class="setting-label">Яркость на панели</div>
-                                <div class="setting-description">Показывать иконку яркости</div>
-                            </div>
-                            <div class="style-selector">
-                                <div class="style-option active" onclick="toggleBrightnessIcon(true, this)">Вкл</div>
-                                <div class="style-option" onclick="toggleBrightnessIcon(false, this)">Выкл</div>
                             </div>
                         </div>
                     </div>
@@ -1667,15 +1742,48 @@
         showNotification('info', 'Код очищен');
     }
 
+    // ==================== ПОИСК ====================
+    function openSearch() {
+        openWindow('search');
+        document.getElementById('searchInput').focus();
+    }
+
+    function performSearch() {
+        const query = document.getElementById('searchInput').value;
+        if (query.trim() === '') return;
+        
+        openWindow('browser');
+        const frame = document.getElementById('browserFrame');
+        frame.src = 'https://www.google.com/search?q=' + encodeURIComponent(query);
+        document.getElementById('browserUrl').value = 'https://www.google.com/search?q=' + encodeURIComponent(query);
+    }
+
+    function handleSearchEnter(event) {
+        if (event.key === 'Enter') {
+            performSearch();
+        }
+    }
+
+    function openSiteInBrowser(url) {
+        openWindow('browser');
+        const frame = document.getElementById('browserFrame');
+        frame.src = url;
+        document.getElementById('browserUrl').value = url;
+    }
+
     // ==================== БРАУЗЕР ====================
     function browserGo() {
-        const url = document.getElementById('browserUrl').value;
+        const input = document.getElementById('browserUrl').value;
         const frame = document.getElementById('browserFrame');
         
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            frame.src = 'https://' + url;
+        if (input.includes('.') && !input.includes(' ')) {
+            if (!input.startsWith('http://') && !input.startsWith('https://')) {
+                frame.src = 'https://' + input;
+            } else {
+                frame.src = input;
+            }
         } else {
-            frame.src = url;
+            frame.src = 'https://www.google.com/search?q=' + encodeURIComponent(input);
         }
         
         document.getElementById('browserUrl').value = frame.src;
