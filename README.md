@@ -1,7 +1,7 @@
 # 💻 DobroOS 12
 
 ![Version](https://img.shields.io/badge/Версия-12.0.1-blue)
-![Build](https://img.shields.io/badge/Сборка-1H01-green)
+![Build](https://img.shields.io/badge/Сборка-1H02-green)
 ![Year](https://img.shields.io/badge/Год_выпуска-2026-purple)
 ![Status](https://img.shields.io/badge/Статус-Активная_разработка-orange)
 
