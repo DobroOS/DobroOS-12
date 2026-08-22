@@ -6,6 +6,7 @@
     <title>DobroOS 12 - Версия 1H01</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ==================== ВСЕ СТИЛИ ==================== */
         * {
             margin: 0;
             padding: 0;
@@ -20,6 +21,7 @@
             --success-color: #4CAF50;
             --glass-blur: 40px;
             --glass-color: rgba(0, 120, 212, 0.2);
+            --taskbar-transparent: 0.2;
         }
 
         body {
@@ -29,6 +31,7 @@
             color: white;
         }
 
+        /* Анимации */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
@@ -164,7 +167,7 @@
             left: 50%;
             transform: translateX(-50%);
             height: 60px;
-            background: var(--glass-color);
+            background: rgba(0, 120, 212, var(--taskbar-transparent));
             backdrop-filter: blur(var(--glass-blur));
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
@@ -174,6 +177,15 @@
             z-index: 1000;
             gap: 5px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        .taskbar.stretched {
+            bottom: 0;
+            left: 0;
+            transform: none;
+            border-radius: 20px 20px 0 0;
+            width: 100%;
         }
 
         .taskbar-item {
@@ -392,6 +404,109 @@
         .html-coder-editor { flex: 1; padding: 15px; border: none; background: rgba(0, 0, 0, 0.4); color: #00ff00; font-size: 0.9em; font-family: 'Consolas', monospace; outline: none; resize: none; }
         .html-coder-preview { flex: 1; border: none; background: white; border-radius: 10px; margin: 10px; }
 
+        /* НАСТРОЙКИ */
+        .settings-content { display: grid; grid-template-columns: 250px 1fr; height: 100%; }
+        .settings-sidebar { border-right: 1px solid rgba(255, 255, 255, 0.2); padding: 15px; }
+
+        .settings-item {
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .settings-item:hover { background: rgba(255, 255, 255, 0.1); }
+        .settings-item.active { background: rgba(0, 120, 212, 0.2); border: 1px solid var(--accent); }
+
+        .settings-main { padding: 25px; overflow-y: auto; }
+        .setting-group { margin-bottom: 25px; }
+        .setting-group h3 { margin-bottom: 15px; font-weight: 500; font-size: 1.1em; color: var(--accent-light); }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+        }
+
+        .setting-row:hover { background: rgba(255, 255, 255, 0.15); transform: translateX(5px); }
+
+        .color-picker { width: 35px; height: 35px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.3); cursor: pointer; display: inline-block; }
+        .color-input { width: 50px; height: 35px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 8px; cursor: pointer; background: transparent; }
+        .slider { width: 120px; accent-color: var(--accent); }
+
+        .style-selector { display: flex; gap: 8px; }
+
+        .style-option {
+            padding: 8px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .style-option:hover { border-color: var(--accent); }
+        .style-option.active { border-color: var(--accent); background: rgba(0, 120, 212, 0.2); }
+
+        .upload-btn { padding: 8px 15px; border: 2px dashed rgba(255, 255, 255, 0.3); border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.9em; }
+        .upload-btn input { display: none; }
+
+        .avatar-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            margin: 0 auto 15px;
+        }
+
+        .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+        .input-field {
+            padding: 10px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9em;
+            outline: none;
+        }
+
+        .input-field:focus { border-color: var(--accent); }
+
+        .password-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .recent-backgrounds { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .recent-bg-item { width: 80px; height: 50px; border-radius: 8px; border: 2px solid rgba(255, 255, 255, 0.2); cursor: pointer; overflow: hidden; transition: all 0.3s; }
+        .recent-bg-item:hover { border-color: var(--accent); transform: scale(1.05); }
+        .recent-bg-item img { width: 100%; height: 100%; object-fit: cover; }
+        .empty-state { color: rgba(255, 255, 255, 0.5); font-size: 0.9em; padding: 20px; text-align: center; border: 2px dashed rgba(255, 255, 255, 0.2); border-radius: 10px; }
+
         /* УВЕДОМЛЕНИЯ */
         .notification-area {
             position: fixed;
@@ -442,6 +557,14 @@
         .update-notification .update-changes li { margin-bottom: 5px; }
         .update-notification .update-btn { width: 100%; padding: 12px; background: white; color: #0078D4; border: none; border-radius: 10px; font-size: 1em; font-weight: bold; cursor: pointer; transition: all 0.3s; }
         .update-notification .update-btn:hover { transform: scale(1.02); box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); }
+
+        /* ОБНОВЛЕНИЯ */
+        .update-status { text-align: center; padding: 30px; }
+        .update-status .update-icon { font-size: 4em; color: var(--success-color); margin-bottom: 20px; animation: pulse 2s infinite; }
+        .update-status h3 { font-size: 1.5em; margin-bottom: 10px; }
+        .update-status p { opacity: 0.7; }
+        .update-check-btn { padding: 15px 30px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: white; font-size: 1em; cursor: pointer; transition: all 0.3s; margin-top: 20px; }
+        .update-check-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 120, 212, 0.3); }
     </style>
 </head>
 <body>
@@ -482,6 +605,12 @@
         </div>
         <div class="taskbar-item" onclick="openWindow('htmlcoder')">
             <i class="fas fa-code"></i>
+        </div>
+        <div class="taskbar-item" onclick="openWindow('settings')">
+            <i class="fas fa-cog"></i>
+        </div>
+        <div class="taskbar-item" onclick="openWindow('info')">
+            <i class="fas fa-info-circle"></i>
         </div>
         <div class="taskbar-clock" onclick="toggleCalendar()">
             <div id="taskbarTime">12:00</div>
@@ -533,6 +662,14 @@
             <div class="start-menu-item" onclick="openWindow('htmlcoder')">
                 <i class="fas fa-code"></i>
                 <span>HTML Coder</span>
+            </div>
+            <div class="start-menu-item" onclick="openWindow('settings')">
+                <i class="fas fa-cog"></i>
+                <span>Настройки</span>
+            </div>
+            <div class="start-menu-item" onclick="openWindow('info')">
+                <i class="fas fa-info-circle"></i>
+                <span>О системе</span>
             </div>
         </div>
         
@@ -618,6 +755,340 @@
         </div>
         <div class="window-resize-handle"></div>
     </div>
+
+    <!-- Окно Настроек -->
+    <div class="window" id="window-settings" style="top: 80px; left: 300px; width: 800px; height: 600px;">
+        <div class="window-titlebar">
+            <i class="fas fa-cog"></i>
+            <span class="window-title">Настройки</span>
+            <div class="window-controls">
+                <button class="win-btn close" onclick="closeWindow('settings')">✕</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <div class="settings-content">
+                <div class="settings-sidebar">
+                    <div class="settings-item active" onclick="switchSettingsTab(this)"><i class="fas fa-palette"></i> Персонализация</div>
+                    <div class="settings-item" onclick="switchSettingsTab(this)"><i class="fas fa-windows"></i> Пуск</div>
+                    <div class="settings-item" onclick="switchSettingsTab(this)"><i class="fas fa-tasks"></i> Панель задач</div>
+                    <div class="settings-item" onclick="switchSettingsTab(this)"><i class="fas fa-user-circle"></i> Учётная запись</div>
+                    <div class="settings-item" onclick="switchSettingsTab(this)"><i class="fas fa-globe"></i> Язык и время</div>
+                    <div class="settings-item" onclick="switchSettingsTab(this)"><i class="fas fa-sync"></i> Обновления</div>
+                    <div class="settings-item" onclick="switchSettingsTab(this)"><i class="fas fa-info-circle"></i> О ПК</div>
+                </div>
+                <div class="settings-main">
+                    <!-- Персонализация -->
+                    <div class="settings-tab" data-tab="0">
+                        <div class="setting-group">
+                            <h3>Акцентный цвет</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Выберите цвет</div>
+                                    <div class="setting-description">Цвет будет использоваться в системе</div>
+                                </div>
+                                <div>
+                                    <div class="color-picker" style="background: #0078D4;" onclick="changeAccent('#0078D4')"></div>
+                                    <div class="color-picker" style="background: #4CAF50;" onclick="changeAccent('#4CAF50')"></div>
+                                    <div class="color-picker" style="background: #FF6B6B;" onclick="changeAccent('#FF6B6B')"></div>
+                                    <div class="color-picker" style="background: #FFD93D;" onclick="changeAccent('#FFD93D')"></div>
+                                    <div class="color-picker" style="background: #00D2FF;" onclick="changeAccent('#00D2FF')"></div>
+                                    <input type="color" class="color-input" value="#0078D4" onchange="changeAccent(this.value)">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h3>Фон рабочего стола</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Загрузите своё изображение</div>
+                                    <div class="setting-description">JPG, PNG, GIF</div>
+                                </div>
+                                <div class="upload-btn" onclick="document.getElementById('wallpaperUpload').click()">
+                                    <i class="fas fa-upload"></i> Загрузить
+                                    <input type="file" id="wallpaperUpload" accept="image/*" onchange="changeWallpaper(this)">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h3>Недавние фоны</h3>
+                            <div class="recent-backgrounds" id="recentBackgrounds">
+                                <div class="empty-state">Нет недавних фонов</div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h3>Стекло (Glassmorphism)</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Размытие</div>
+                                    <div class="setting-description">От 0 до 50 пикселей</div>
+                                </div>
+                                <input type="range" class="slider" min="0" max="50" value="40" oninput="changeGlassBlur(this.value)">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Пуск -->
+                    <div class="settings-tab" data-tab="1" style="display: none;">
+                        <div class="setting-group">
+                            <h3>Стиль меню Пуск</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Выберите стиль</div>
+                                    <div class="setting-description">Как будет выглядеть меню Пуск</div>
+                                </div>
+                                <div class="style-selector">
+                                    <div class="style-option active" onclick="changeStartStyle('grid', this)">
+                                        <i class="fas fa-th-large"></i> Сетка
+                                    </div>
+                                    <div class="style-option" onclick="changeStartStyle('list', this)">
+                                        <i class="fas fa-list"></i> Список
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h3>Размер меню Пуск</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Ширина</div>
+                                    <div class="setting-description">От 400 до 800 пикселей</div>
+                                </div>
+                                <input type="range" class="slider" min="400" max="800" value="650" oninput="changeStartSize(this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h3>Показывать новости</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">DobroOS News</div>
+                                    <div class="setting-description">Показывать новости в меню Пуск</div>
+                                </div>
+                                <div class="style-selector">
+                                    <div class="style-option active" onclick="toggleNews(true, this)">Вкл</div>
+                                    <div class="style-option" onclick="toggleNews(false, this)">Выкл</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h3>Показывать пользователя</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Профиль пользователя</div>
+                                    <div class="setting-description">Показывать аватар и имя</div>
+                                </div>
+                                <div class="style-selector">
+                                    <div class="style-option active" onclick="toggleUser(true, this)">Вкл</div>
+                                    <div class="style-option" onclick="toggleUser(false, this)">Выкл</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Панель задач -->
+                    <div class="settings-tab" data-tab="2" style="display: none;">
+                        <div class="setting-group">
+                            <h3>Стиль панели задач</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Выберите стиль</div>
+                                    <div class="setting-description">Плавающая или растянутая</div>
+                                </div>
+                                <div class="style-selector">
+                                    <div class="style-option active" onclick="setTaskbarStyle('floating', this)">
+                                        <i class="fas fa-circle"></i> Плавающая
+                                    </div>
+                                    <div class="style-option" onclick="setTaskbarStyle('stretched', this)">
+                                        <i class="fas fa-square"></i> Растянутая
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h3>Размер панели</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Высота панели</div>
+                                    <div class="setting-description">От 40 до 80 пикселей</div>
+                                </div>
+                                <input type="range" class="slider" min="40" max="80" value="60" oninput="changeTaskbarSize(this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h3>Прозрачность панели</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Прозрачность</div>
+                                    <div class="setting-description">От 0 до 0.5</div>
+                                </div>
+                                <input type="range" class="slider" min="0" max="0.5" step="0.05" value="0.2" oninput="changeTaskbarOpacity(this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h3>Показывать часы</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Часы на панели</div>
+                                    <div class="setting-description">Показывать время и дату</div>
+                                </div>
+                                <div class="style-selector">
+                                    <div class="style-option active" onclick="toggleClock(true, this)">Вкл</div>
+                                    <div class="style-option" onclick="toggleClock(false, this)">Выкл</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Учётная запись -->
+                    <div class="settings-tab" data-tab="3" style="display: none;">
+                        <div class="setting-group">
+                            <h3>Имя пользователя</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Изменить имя</div>
+                                    <div class="setting-description">Введите новое имя</div>
+                                </div>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" class="input-field" id="newUserName" placeholder="Новое имя" style="width: 120px;">
+                                    <button class="password-btn" onclick="changeUserName()">OK</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h3>Изменение пароля</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Введите новый пароль</div>
+                                    <div class="setting-description">Минимум 4 символа</div>
+                                </div>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="password" class="input-field" id="currentPassword" placeholder="Текущий" style="width: 100px;">
+                                    <input type="password" class="input-field" id="newPassword" placeholder="Новый" style="width: 100px;">
+                                    <button class="password-btn" onclick="changePassword()">OK</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Язык и время -->
+                    <div class="settings-tab" data-tab="4" style="display: none;">
+                        <div class="setting-group">
+                            <h3>Язык</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Выберите язык</div>
+                                    <div class="setting-description">Язык интерфейса</div>
+                                </div>
+                                <div class="style-selector">
+                                    <div class="style-option active" onclick="changeLanguage('ru', this)">🇷🇺 RUSSIA</div>
+                                    <div class="style-option" onclick="changeLanguage('en', this)">🇬🇧 ENGLISH</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h3>Время</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Формат времени</div>
+                                    <div class="setting-description">12 или 24 часа</div>
+                                </div>
+                                <div class="style-selector">
+                                    <div class="style-option active" onclick="setTimeFormat('24', this)">24 часа</div>
+                                    <div class="style-option" onclick="setTimeFormat('12', this)">12 часов</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Обновления -->
+                    <div class="settings-tab" data-tab="5" style="display: none;">
+                        <div class="update-status">
+                            <div class="update-icon"><i class="fas fa-check-circle"></i></div>
+                            <h3>Система обновлена</h3>
+                            <p>Версия DobroOS 12 (Сборка 1H01)</p>
+                            <p>Последняя проверка: сегодня</p>
+                            <button class="update-check-btn" onclick="checkForUpdates()">
+                                <i class="fas fa-sync"></i> Проверить обновления
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- О ПК -->
+                    <div class="settings-tab" data-tab="6" style="display: none;">
+                        <div class="info-content">
+                            <div class="logo"><i class="fab fa-windows"></i></div>
+                            <h2>DobroOS</h2>
+                            <div class="details">
+                                <div class="detail-row">
+                                    <span class="label">Версия</span>
+                                    <span class="value">1H01</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Сборка</span>
+                                    <span class="value">12.0.1</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Тип</span>
+                                    <span class="value">Web OS</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Разработчик</span>
+                                    <span class="value">DobroTeam</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Год выпуска</span>
+                                    <span class="value">2026</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="window-resize-handle"></div>
+    </div>
+
+    <!-- Окно О системе -->
+    <div class="window" id="window-info" style="top: 120px; left: 500px; width: 350px; height: 250px;">
+        <div class="window-titlebar">
+            <i class="fas fa-info-circle"></i>
+            <span class="window-title">О системе</span>
+            <div class="window-controls">
+                <button class="win-btn close" onclick="closeWindow('info')">✕</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <div class="info-content">
+                <div class="logo"><i class="fab fa-windows"></i></div>
+                <h2>DobroOS</h2>
+                <div class="details">
+                    <div class="detail-row">
+                        <span class="label">Версия</span>
+                        <span class="value">1H01</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Сборка</span>
+                        <span class="value">12.0.1</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Год выпуска</span>
+                        <span class="value">2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="window-resize-handle"></div>
+    </div>
 </div>
 
 <!-- Область уведомлений -->
@@ -626,10 +1097,14 @@
 <script>
     // ==================== ПЕРЕМЕННЫЕ ====================
     let SYSTEM_PASSWORD = '1234';
+    let SYSTEM_USER = { name: 'Пользователь' };
     let calcExpression = '';
     let currentCalendarMonth = new Date().getMonth();
     let currentCalendarYear = new Date().getFullYear();
     let brightness = 100;
+    let timeFormat = '24';
+    let currentLanguage = 'ru';
+    let recentBackgrounds = [];
 
     // ==================== СИСТЕМА ОБНОВЛЕНИЙ ====================
     const CURRENT_VERSION = '1H01';
@@ -644,7 +1119,7 @@
             if (data.version !== CURRENT_VERSION) {
                 showUpdateNotification(data);
             } else {
-                console.log('У вас последняя версия!');
+                showNotification('success', 'У вас последняя версия!');
             }
         } catch (error) {
             console.log('Не удалось проверить обновления');
@@ -892,6 +1367,171 @@
         showNotification('info', 'Код очищен');
     }
 
+    // ==================== НАСТРОЙКИ ====================
+    function switchSettingsTab(element) {
+        document.querySelectorAll('.settings-item').forEach(item => item.classList.remove('active'));
+        element.classList.add('active');
+        
+        const index = Array.from(element.parentElement.children).indexOf(element);
+        document.querySelectorAll('.settings-tab').forEach(tab => {
+            tab.style.display = 'none';
+            if (parseInt(tab.dataset.tab) === index) {
+                tab.style.display = 'block';
+            }
+        });
+    }
+
+    function changeAccent(color) {
+        document.documentElement.style.setProperty('--accent', color);
+        document.documentElement.style.setProperty('--accent-light', color + '99');
+    }
+
+    function changeGlassBlur(value) {
+        document.documentElement.style.setProperty('--glass-blur', value + 'px');
+    }
+
+    function changeStartStyle(style, element) {
+        document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+        showNotification('success', 'Стиль Пуска изменён!');
+    }
+
+    function changeStartSize(value) {
+        document.getElementById('startMenu').style.width = value + 'px';
+    }
+
+    function toggleNews(show, element) {
+        document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+        document.querySelector('.start-menu-news').style.display = show ? 'block' : 'none';
+    }
+
+    function toggleUser(show, element) {
+        document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+        document.querySelector('.start-menu-user').style.display = show ? 'flex' : 'none';
+    }
+
+    function setTaskbarStyle(style, element) {
+        const taskbar = document.getElementById('taskbar');
+        if (style === 'floating') {
+            taskbar.classList.remove('stretched');
+            taskbar.style.bottom = '20px';
+            taskbar.style.left = '50%';
+            taskbar.style.transform = 'translateX(-50%)';
+            taskbar.style.borderRadius = '20px';
+            taskbar.style.width = 'auto';
+        } else {
+            taskbar.classList.add('stretched');
+            taskbar.style.bottom = '0';
+            taskbar.style.left = '0';
+            taskbar.style.transform = 'none';
+            taskbar.style.borderRadius = '20px 20px 0 0';
+            taskbar.style.width = '100%';
+        }
+        
+        document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+    }
+
+    function changeTaskbarSize(value) {
+        document.getElementById('taskbar').style.height = value + 'px';
+    }
+
+    function changeTaskbarOpacity(value) {
+        document.documentElement.style.setProperty('--taskbar-transparent', value);
+    }
+
+    function toggleClock(show, element) {
+        document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+        document.querySelector('.taskbar-clock').style.display = show ? 'block' : 'none';
+    }
+
+    function changeUserName() {
+        const newName = document.getElementById('newUserName').value;
+        if (newName.trim().length >= 2) {
+            SYSTEM_USER.name = newName.trim();
+            document.getElementById('lockUserName').textContent = SYSTEM_USER.name;
+            document.getElementById('menuUserName').textContent = SYSTEM_USER.name;
+            document.getElementById('newUserName').value = '';
+            showNotification('success', 'Имя изменено!');
+        } else {
+            showNotification('error', 'Имя должно быть минимум 2 символа!');
+        }
+    }
+
+    function changePassword() {
+        const current = document.getElementById('currentPassword').value;
+        const newPass = document.getElementById('newPassword').value;
+        
+        if (current === SYSTEM_PASSWORD && newPass.length >= 4) {
+            SYSTEM_PASSWORD = newPass;
+            showNotification('success', 'Пароль изменён!');
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+        } else {
+            showNotification('error', 'Ошибка!');
+        }
+    }
+
+    function changeLanguage(lang, element) {
+        currentLanguage = lang;
+        document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+        showNotification('success', lang === 'ru' ? 'Язык изменён на Русский' : 'Language changed to English');
+    }
+
+    function setTimeFormat(format, element) {
+        timeFormat = format;
+        document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+        updateClocks();
+    }
+
+    function changeWallpaper(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageUrl = e.target.result;
+                const wallpaper = document.getElementById('desktopWallpaper');
+                wallpaper.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.9;">`;
+                addRecentBackground(imageUrl);
+                showNotification('success', 'Обои обновлены!');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function addRecentBackground(imageSrc) {
+        recentBackgrounds.unshift(imageSrc);
+        if (recentBackgrounds.length > 6) {
+            recentBackgrounds.pop();
+        }
+        renderRecentBackgrounds();
+    }
+
+    function renderRecentBackgrounds() {
+        const container = document.getElementById('recentBackgrounds');
+        container.innerHTML = '';
+        
+        if (recentBackgrounds.length === 0) {
+            container.innerHTML = '<div class="empty-state">Нет недавних фонов</div>';
+            return;
+        }
+        
+        recentBackgrounds.forEach((bg, index) => {
+            const div = document.createElement('div');
+            div.className = 'recent-bg-item';
+            div.innerHTML = `<img src="${bg}" alt="Фон ${index + 1}">`;
+            div.onclick = () => {
+                const wallpaper = document.getElementById('desktopWallpaper');
+                wallpaper.innerHTML = `<img src="${bg}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.9;">`;
+            };
+            container.appendChild(div);
+        });
+    }
+
     // ==================== УВЕДОМЛЕНИЯ ====================
     function showNotification(type, message) {
         const area = document.getElementById('notificationArea');
@@ -908,9 +1548,17 @@
     // ==================== ЧАСЫ ====================
     function updateClocks() {
         const now = new Date();
-        document.getElementById('taskbarTime').textContent = now.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
+        let timeString;
+        
+        if (timeFormat === '24') {
+            timeString = now.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
+        } else {
+            timeString = now.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', hour12: true});
+        }
+        
+        document.getElementById('taskbarTime').textContent = timeString;
         document.getElementById('taskbarDate').textContent = now.toLocaleDateString('ru-RU', {day: 'numeric', month: 'long'});
-        document.getElementById('lockTime').textContent = now.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
+        document.getElementById('lockTime').textContent = timeString;
         document.getElementById('lockDate').textContent = now.toLocaleDateString('ru-RU', {day: 'numeric', month: 'long', year: 'numeric'});
     }
 
@@ -918,6 +1566,7 @@
     setInterval(updateClocks, 1000);
     updateClocks();
     renderCalendar();
+    renderRecentBackgrounds();
 
     // Закрытие меню по клику вне
     document.addEventListener('click', (e) => {
